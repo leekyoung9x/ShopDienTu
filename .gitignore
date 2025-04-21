@@ -1,0 +1,27 @@
+# ==== Global ignore ====
+node_modules/
+dist/
+.env
+.env.*       # bao gồm .env.local, .env.production...
+.vscode/
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ==== Frontend ====
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.env
+/frontend/.env.*
+
+# ==== Backend ====
+/backend/node_modules/
+/backend/dist/
+/backend/build/
+/backend/.env
+/backend/.env.*
+
+# ==== SQL ====
+*.sql     # nếu không muốn push file schema.sql và seed.sql thì bỏ comment dòng này

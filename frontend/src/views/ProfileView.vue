@@ -1,0 +1,292 @@
+<template>
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Thông tin tài khoản</h1>
+
+    <!-- Loading skeleton -->
+    <div v-if="loading" class="space-y-6">
+      <Skeleton height="150px" />
+      <Skeleton height="300px" />
+    </div>
+
+    <!-- Profile form -->
+    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Profile Info -->
+      <div class="lg:col-span-2">
+        <form @submit.prevent="saveProfile" class="bg-white rounded-lg shadow-sm p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            Chỉnh sửa thông tin
+          </h2>
+
+          <div class="space-y-6">
+            <div>
+              <label class="form-label">Họ và tên</label>
+              <InputText
+                v-model="form.fullName"
+                class="w-full"
+                :class="{ 'p-invalid': errors.fullName }"
+              />
+              <small class="error-text">{{ errors.fullName }}</small>
+            </div>
+
+            <div>
+              <label class="form-label">Email</label>
+              <InputText
+                v-model="form.email"
+                type="email"
+                class="w-full"
+                disabled
+              />
+              <small class="text-gray-500">Email không thể thay đổi</small>
+            </div>
+
+            <div>
+              <label class="form-label">Số điện thoại</label>
+              <InputText
+                v-model="form.phone"
+                class="w-full"
+                :class="{ 'p-invalid': errors.phone }"
+              />
+              <small class="error-text">{{ errors.phone }}</small>
+            </div>
+
+            <div>
+              <label class="form-label">Địa chỉ</label>
+              <Textarea
+                v-model="form.address"
+                rows="3"
+                class="w-full"
+                :class="{ 'p-invalid': errors.address }"
+              />
+              <small class="error-text">{{ errors.address }}</small>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+              <Button
+                type="button"
+                label="Hủy"
+                severity="secondary"
+                text
+                @click="resetForm"
+              />
+              <Button
+                type="submit"
+                label="Lưu thay đổi"
+                :loading="saving"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Change Password -->
+      <div class="lg:col-span-1">
+        <form @submit.prevent="changePassword" class="bg-white rounded-lg shadow-sm p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            Đổi mật khẩu
+          </h2>
+
+          <div class="space-y-4">
+            <div>
+              <label class="form-label">Mật khẩu hiện tại</label>
+              <Password
+                v-model="passwordForm.currentPassword"
+                :feedback="false"
+                toggleMask
+                class="w-full"
+                :class="{ 'p-invalid': errors.currentPassword }"
+              />
+              <small class="error-text">{{ errors.currentPassword }}</small>
+            </div>
+
+            <div>
+              <label class="form-label">Mật khẩu mới</label>
+              <Password
+                v-model="passwordForm.newPassword"
+                toggleMask
+                class="w-full"
+                :class="{ 'p-invalid': errors.newPassword }"
+              />
+              <small class="error-text">{{ errors.newPassword }}</small>
+            </div>
+
+            <div>
+              <label class="form-label">Xác nhận mật khẩu mới</label>
+              <Password
+                v-model="passwordForm.confirmPassword"
+                :feedback="false"
+                toggleMask
+                class="w-full"
+                :class="{ 'p-invalid': errors.confirmPassword }"
+              />
+              <small class="error-text">{{ errors.confirmPassword }}</small>
+            </div>
+
+            <Button
+              type="submit"
+              label="Đổi mật khẩu"
+              :loading="changingPassword"
+              class="w-full mt-4"
+            />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import Textarea from 'primevue/textarea';
+import Password from 'primevue/password';
+import Skeleton from 'primevue/skeleton';
+import { useToast } from 'primevue/usetoast';
+
+const authStore = useAuthStore();
+const toast = useToast();
+
+const loading = ref(false);
+const saving = ref(false);
+const changingPassword = ref(false);
+
+const form = reactive({
+  fullName: '',
+  email: '',
+  phone: '',
+  address: ''
+});
+
+const passwordForm = reactive({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+});
+
+const errors = reactive({
+  fullName: '',
+  phone: '',
+  address: '',
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+});
+
+const resetForm = () => {
+  const user = authStore.user;
+  form.fullName = user.fullName;
+  form.email = user.email;
+  form.phone = user.phone || '';
+  form.address = user.address || '';
+};
+
+const validateForm = () => {
+  let isValid = true;
+  errors.fullName = '';
+  errors.phone = '';
+  errors.address = '';
+
+  if (!form.fullName) {
+    errors.fullName = 'Họ và tên là bắt buộc';
+    isValid = false;
+  }
+
+  if (form.phone && !/^[0-9]{10,11}$/.test(form.phone)) {
+    errors.phone = 'Số điện thoại không hợp lệ';
+    isValid = false;
+  }
+
+  return isValid;
+};
+
+const validatePasswordForm = () => {
+  let isValid = true;
+  errors.currentPassword = '';
+  errors.newPassword = '';
+  errors.confirmPassword = '';
+
+  if (!passwordForm.currentPassword) {
+    errors.currentPassword = 'Mật khẩu hiện tại là bắt buộc';
+    isValid = false;
+  }
+
+  if (!passwordForm.newPassword) {
+    errors.newPassword = 'Mật khẩu mới là bắt buộc';
+    isValid = false;
+  } else if (passwordForm.newPassword.length < 6) {
+    errors.newPassword = 'Mật khẩu phải có ít nhất 6 ký tự';
+    isValid = false;
+  }
+
+  if (!passwordForm.confirmPassword) {
+    errors.confirmPassword = 'Xác nhận mật khẩu là bắt buộc';
+    isValid = false;
+  } else if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+    errors.confirmPassword = 'Mật khẩu xác nhận không khớp';
+    isValid = false;
+  }
+
+  return isValid;
+};
+
+const saveProfile = async () => {
+  if (!validateForm()) return;
+
+  try {
+    saving.value = true;
+    await authStore.updateProfile(form);
+    toast.add({
+      severity: 'success',
+      summary: 'Thành công',
+      detail: 'Thông tin tài khoản đã được cập nhật',
+      life: 3000
+    });
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: error.message || 'Không thể cập nhật thông tin',
+      life: 3000
+    });
+  } finally {
+    saving.value = false;
+  }
+};
+
+const changePassword = async () => {
+  if (!validatePasswordForm()) return;
+
+  try {
+    changingPassword.value = true;
+    await authStore.changePassword(passwordForm);
+    
+    toast.add({
+      severity: 'success',
+      summary: 'Thành công',
+      detail: 'Mật khẩu đã được thay đổi',
+      life: 3000
+    });
+
+    // Reset password form
+    passwordForm.currentPassword = '';
+    passwordForm.newPassword = '';
+    passwordForm.confirmPassword = '';
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: error.message || 'Không thể thay đổi mật khẩu',
+      life: 3000
+    });
+  } finally {
+    changingPassword.value = false;
+  }
+};
+
+onMounted(() => {
+  loading.value = true;
+  resetForm();
+  loading.value = false;
+});
+</script>

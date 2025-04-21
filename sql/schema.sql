@@ -1,0 +1,58 @@
+-- Create database
+CREATE DATABASE IF NOT EXISTS ecommerce_db;
+USE ecommerce_db;
+
+-- Users table
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    fullName VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'user') DEFAULT 'user',
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Products table
+CREATE TABLE IF NOT EXISTS products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    quantity INT NOT NULL DEFAULT 0,
+    description TEXT,
+    image VARCHAR(255),
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Orders table
+CREATE TABLE IF NOT EXISTS orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    userId INT NOT NULL,
+    totalAmount DECIMAL(10,2) NOT NULL,
+    status ENUM('pending', 'completed', 'cancelled') DEFAULT 'pending',
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Order items table
+CREATE TABLE IF NOT EXISTS orderItems (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    orderId INT NOT NULL,
+    productId INT NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- Refresh tokens table
+CREATE TABLE IF NOT EXISTS refreshTokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    userId INT NOT NULL,
+    token VARCHAR(500) NOT NULL,
+    expiresAt DATETIME NOT NULL,
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+);
