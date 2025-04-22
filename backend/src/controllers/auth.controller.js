@@ -192,6 +192,30 @@ const changePassword = async (req, res, next) => {
   }
 };
 
+const getCurrentUser = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      throw new AuthenticationError('User not found');
+    }
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        phone: user.phone,
+        address: user.address,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -199,5 +223,6 @@ module.exports = {
   logout,
   googleCallback,
   updateProfile,
-  changePassword
+  changePassword,
+  getCurrentUser
 };

@@ -20,6 +20,11 @@ import Paginator from 'primevue/paginator'
 import Breadcrumb from 'primevue/breadcrumb'
 import Steps from 'primevue/steps'
 import Tag from 'primevue/tag'
+import Divider from 'primevue/divider'
+import Avatar from 'primevue/avatar'
+import AvatarGroup from 'primevue/avatargroup'
+import TieredMenu from 'primevue/tieredmenu'
+import Panel from 'primevue/panel'
 
 // Styles
 import 'primevue/resources/themes/lara-light-blue/theme.css'
@@ -49,6 +54,11 @@ app.component('Paginator', Paginator)
 app.component('Breadcrumb', Breadcrumb)
 app.component('Steps', Steps)
 app.component('Tag', Tag)
+app.component('Divider', Divider)
+app.component('Avatar', Avatar)
+app.component('AvatarGroup', AvatarGroup)
+app.component('TieredMenu', TieredMenu)
+app.component('Panel', Panel)
 
 // Make axios available globally
 app.config.globalProperties.$axios = axios

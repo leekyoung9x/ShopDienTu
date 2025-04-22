@@ -18,46 +18,58 @@
           </h2>
 
           <div class="space-y-6">
-            <div>
-              <label class="form-label">Họ và tên</label>
-              <InputText
-                v-model="form.fullName"
-                class="w-full"
-                :class="{ 'p-invalid': errors.fullName }"
-              />
-              <small class="error-text">{{ errors.fullName }}</small>
+            <div class="mb-6">
+              <span class="p-float-label w-full">
+                <InputText
+                  id="fullName"
+                  v-model="form.fullName"
+                  class="w-full"
+                  :class="{ 'p-invalid': errors.fullName }"
+                />
+                <label for="fullName">Họ và tên</label>
+              </span>
+              <small v-if="errors.fullName" class="p-error block mt-2 text-red-500">{{ errors.fullName }}</small>
             </div>
 
-            <div>
-              <label class="form-label">Email</label>
-              <InputText
-                v-model="form.email"
-                type="email"
-                class="w-full"
-                disabled
-              />
-              <small class="text-gray-500">Email không thể thay đổi</small>
+            <div class="mb-6">
+              <span class="p-float-label w-full">
+                <InputText
+                  id="email"
+                  v-model="form.email"
+                  type="email"
+                  class="w-full"
+                  disabled
+                />
+                <label for="email">Email</label>
+              </span>
+              <small class="block mt-2 text-gray-500">Email không thể thay đổi</small>
             </div>
 
-            <div>
-              <label class="form-label">Số điện thoại</label>
-              <InputText
-                v-model="form.phone"
-                class="w-full"
-                :class="{ 'p-invalid': errors.phone }"
-              />
-              <small class="error-text">{{ errors.phone }}</small>
+            <div class="mb-6">
+              <span class="p-float-label w-full">
+                <InputText
+                  id="phone"
+                  v-model="form.phone"
+                  class="w-full"
+                  :class="{ 'p-invalid': errors.phone }"
+                />
+                <label for="phone">Số điện thoại</label>
+              </span>
+              <small v-if="errors.phone" class="p-error block mt-2 text-red-500">{{ errors.phone }}</small>
             </div>
 
-            <div>
-              <label class="form-label">Địa chỉ</label>
-              <Textarea
-                v-model="form.address"
-                rows="3"
-                class="w-full"
-                :class="{ 'p-invalid': errors.address }"
-              />
-              <small class="error-text">{{ errors.address }}</small>
+            <div class="mb-6">
+              <span class="p-float-label w-full">
+                <Textarea
+                  id="address"
+                  v-model="form.address"
+                  rows="3"
+                  class="w-full"
+                  :class="{ 'p-invalid': errors.address }"
+                />
+                <label for="address">Địa chỉ</label>
+              </span>
+              <small v-if="errors.address" class="p-error block mt-2 text-red-500">{{ errors.address }}</small>
             </div>
 
             <div class="flex justify-end space-x-4">
@@ -86,39 +98,51 @@
           </h2>
 
           <div class="space-y-4">
-            <div>
-              <label class="form-label">Mật khẩu hiện tại</label>
-              <Password
-                v-model="passwordForm.currentPassword"
-                :feedback="false"
-                toggleMask
-                class="w-full"
-                :class="{ 'p-invalid': errors.currentPassword }"
-              />
-              <small class="error-text">{{ errors.currentPassword }}</small>
+            <div class="mb-4">
+              <span class="p-float-label w-full">
+                <Password
+                  id="currentPassword"
+                  v-model="passwordForm.currentPassword"
+                  :feedback="false"
+                  toggleMask
+                  class="w-full"
+                  :class="{ 'p-invalid': errors.currentPassword }"
+                  inputClass="w-full"
+                />
+                <label for="currentPassword">Mật khẩu hiện tại</label>
+              </span>
+              <small v-if="errors.currentPassword" class="p-error block mt-2 text-red-500">{{ errors.currentPassword }}</small>
             </div>
 
-            <div>
-              <label class="form-label">Mật khẩu mới</label>
-              <Password
-                v-model="passwordForm.newPassword"
-                toggleMask
-                class="w-full"
-                :class="{ 'p-invalid': errors.newPassword }"
-              />
-              <small class="error-text">{{ errors.newPassword }}</small>
+            <div class="mb-4">
+              <span class="p-float-label w-full">
+                <Password
+                  id="newPassword"
+                  v-model="passwordForm.newPassword"
+                  toggleMask
+                  class="w-full"
+                  :class="{ 'p-invalid': errors.newPassword }"
+                  inputClass="w-full"
+                />
+                <label for="newPassword">Mật khẩu mới</label>
+              </span>
+              <small v-if="errors.newPassword" class="p-error block mt-2 text-red-500">{{ errors.newPassword }}</small>
             </div>
 
-            <div>
-              <label class="form-label">Xác nhận mật khẩu mới</label>
-              <Password
-                v-model="passwordForm.confirmPassword"
-                :feedback="false"
-                toggleMask
-                class="w-full"
-                :class="{ 'p-invalid': errors.confirmPassword }"
-              />
-              <small class="error-text">{{ errors.confirmPassword }}</small>
+            <div class="mb-4">
+              <span class="p-float-label w-full">
+                <Password
+                  id="confirmPassword"
+                  v-model="passwordForm.confirmPassword"
+                  :feedback="false"
+                  toggleMask
+                  class="w-full"
+                  :class="{ 'p-invalid': errors.confirmPassword }"
+                  inputClass="w-full"
+                />
+                <label for="confirmPassword">Xác nhận mật khẩu mới</label>
+              </span>
+              <small v-if="errors.confirmPassword" class="p-error block mt-2 text-red-500">{{ errors.confirmPassword }}</small>
             </div>
 
             <Button

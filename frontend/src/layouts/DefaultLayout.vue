@@ -37,9 +37,12 @@
         </div>
 
         <!-- Mobile Menu Toggle -->
-        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-gray-600 focus:outline-none p-2 rounded-full hover:bg-gray-100 transition-colors">
-          <i class="pi pi-bars text-xl"></i>
-        </button>
+        <Button 
+          @click="mobileMenuOpen = !mobileMenuOpen" 
+          icon="pi pi-bars"
+          class="md:hidden p-button-text p-button-rounded" 
+          aria-label="Toggle mobile menu"
+        />
 
         <!-- Desktop Navigation Links -->
         <div class="hidden md:flex items-center space-x-4">
@@ -76,17 +79,27 @@
           </div>
           
           <!-- User Menu khi đã đăng nhập -->
-          <Menu v-else v-model:popup="userMenuVisible" :model="userMenuItems" class="user-menu">
-            <template #target>
-              <button class="flex items-center text-gray-700 hover:text-primary-600 font-medium transition-colors px-2 py-1 rounded-full hover:bg-gray-50">
-                <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 mr-2 border-2 border-primary-200">
-                  {{ user.fullName.charAt(0) }}
-                </div>
-                <span class="truncate max-w-[100px]">{{ user.fullName }}</span>
-                <i class="pi pi-angle-down ml-1 text-xs"></i>
-              </button>
+          <SplitButton 
+            v-else
+            :label="user.fullName"
+            :model="userMenuItems"
+            class="p-button-text p-button-rounded user-profile-button"
+            @click="navigateTo('/profile')"
+          >
+            <template #icon>
+              <Avatar 
+                :label="user.fullName.charAt(0)" 
+                class="mr-2" 
+                shape="circle" 
+                size="normal"
+                :style="{ 
+                  backgroundColor: '#E1F5FE', 
+                  color: '#0288D1', 
+                  border: '2px solid #81D4FA' 
+                }" 
+              />
             </template>
-          </Menu>
+          </SplitButton>
         </div>
       </nav>
 
@@ -109,51 +122,85 @@
         </div>
 
         <div class="flex flex-col space-y-3">
-          <router-link to="/products" class="flex items-center py-2 text-gray-700" @click="mobileMenuOpen = false">
-            <i class="pi pi-box mr-2"></i>
-            <span>Sản phẩm</span>
-          </router-link>
-          <router-link to="/cart" class="flex items-center py-2 text-gray-700" @click="mobileMenuOpen = false">
-            <i class="pi pi-shopping-cart mr-2"></i>
+          <Button 
+            icon="pi pi-box"
+            label="Sản phẩm"
+            class="w-full text-left p-button-text p-button-plain py-2 justify-start text-gray-700"
+            text
+            @click="navigateTo('/products'); mobileMenuOpen = false"
+          />
+          <Button 
+            class="w-full text-left p-button-text p-button-plain py-2 justify-start text-gray-700"
+            text
+            @click="navigateTo('/cart'); mobileMenuOpen = false"
+          >
+            <template #icon>
+              <i class="pi pi-shopping-cart mr-2"></i>
+            </template>
             <span>Giỏ hàng</span>
             <span v-if="cartTotal > 0" class="ml-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
               {{ cartTotal }}
             </span>
-          </router-link>
-          <router-link to="/orders" class="flex items-center py-2 text-gray-700" @click="mobileMenuOpen = false">
-            <i class="pi pi-list mr-2"></i>
-            <span>Đơn hàng</span>
-          </router-link>
+          </Button>
+          <Button 
+            icon="pi pi-list"
+            label="Đơn hàng"
+            class="w-full text-left p-button-text p-button-plain py-2 justify-start text-gray-700"
+            text
+            @click="navigateTo('/orders'); mobileMenuOpen = false"
+          />
 
           <Divider />
 
           <div v-if="user">
-            <div class="py-2 text-gray-700">
-              <i class="pi pi-user mr-2"></i>
+            <div class="py-2 text-gray-700 flex items-center">
+              <Avatar 
+                :label="user.fullName.charAt(0)" 
+                class="mr-2" 
+                shape="circle" 
+                size="small"
+                :style="{ backgroundColor: '#E1F5FE', color: '#0288D1' }" 
+              />
               <span>{{ user.fullName }}</span>
             </div>
-            <div @click="navigateTo('/profile'); mobileMenuOpen = false" class="flex items-center py-2 text-gray-700 cursor-pointer">
-              <i class="pi pi-user-edit mr-2"></i>
-              <span>Thông tin tài khoản</span>
-            </div>
-            <div v-if="isAdmin" @click="navigateTo('/admin'); mobileMenuOpen = false" class="flex items-center py-2 text-gray-700 cursor-pointer">
-              <i class="pi pi-cog mr-2"></i>
-              <span>Quản trị</span>
-            </div>
-            <div @click="handleLogout(); mobileMenuOpen = false" class="flex items-center py-2 text-red-600 cursor-pointer">
-              <i class="pi pi-power-off mr-2"></i>
-              <span>Đăng xuất</span>
-            </div>
+            <Button 
+              icon="pi pi-user-edit" 
+              label="Thông tin tài khoản" 
+              @click="navigateTo('/profile'); mobileMenuOpen = false" 
+              class="w-full text-left p-button-text p-button-plain py-2 justify-start"
+              text
+            />
+            <Button 
+              v-if="isAdmin" 
+              icon="pi pi-cog" 
+              label="Quản trị"
+              @click="navigateTo('/admin'); mobileMenuOpen = false" 
+              class="w-full text-left p-button-text p-button-plain py-2 justify-start"
+              text
+            />
+            <Button 
+              icon="pi pi-power-off" 
+              label="Đăng xuất" 
+              @click="handleLogout(); mobileMenuOpen = false" 
+              class="w-full text-left text-red-600 p-button-text p-button-plain py-2 justify-start"
+              text
+            />
           </div>
           <div v-else>
-            <div @click="navigateTo('/login'); mobileMenuOpen = false" class="flex items-center py-2 text-gray-700 cursor-pointer">
-              <i class="pi pi-sign-in mr-2"></i>
-              <span>Đăng nhập</span>
-            </div>
-            <div @click="navigateTo('/register'); mobileMenuOpen = false" class="flex items-center py-2 text-gray-700 cursor-pointer">
-              <i class="pi pi-user-plus mr-2"></i>
-              <span>Đăng ký</span>
-            </div>
+            <Button 
+              icon="pi pi-sign-in" 
+              label="Đăng nhập" 
+              @click="navigateTo('/login'); mobileMenuOpen = false" 
+              class="w-full text-left p-button-text p-button-plain py-2 justify-start"
+              text
+            />
+            <Button 
+              icon="pi pi-user-plus" 
+              label="Đăng ký" 
+              @click="navigateTo('/register'); mobileMenuOpen = false" 
+              class="w-full text-left p-button-text p-button-plain py-2 justify-start"
+              text
+            />
           </div>
         </div>
       </div>
@@ -276,10 +323,11 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
-import Menu from 'primevue/menu'
+import SplitButton from 'primevue/splitbutton'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
+import Avatar from 'primevue/avatar'
 import { useToast } from 'primevue/usetoast'
 
 const router = useRouter()
@@ -373,15 +421,20 @@ const userMenuItems = computed(() => {
         label: 'Thông tin tài khoản',
         icon: 'pi pi-user',
         command: () => navigateTo('/profile')
+      },
+      {
+        label: 'Đơn hàng của tôi',
+        icon: 'pi pi-shopping-bag',
+        command: () => navigateTo('/orders')
       }
     ]
     
     if (isAdmin.value) {
       items.push({
-        label: 'Quản trị',
+        label: 'Quản trị hệ thống',
         icon: 'pi pi-cog',
         command: () => navigateTo('/admin')
-      })
+      });
     }
     
     items.push(
@@ -389,7 +442,8 @@ const userMenuItems = computed(() => {
       {
         label: 'Đăng xuất',
         icon: 'pi pi-power-off',
-        command: handleLogout
+        command: handleLogout,
+        class: 'text-red-500'
       }
     )
     

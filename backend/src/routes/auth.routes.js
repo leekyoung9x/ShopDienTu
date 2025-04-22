@@ -8,7 +8,8 @@ const {
   logout,
   googleCallback,
   updateProfile,
-  changePassword
+  changePassword,
+  getCurrentUser
 } = require('../controllers/auth.controller');
 const {
   validateRegister,
@@ -26,6 +27,7 @@ router.post('/refresh-token', validateRefreshToken, refreshToken);
 router.post('/logout', validateRefreshToken, logout);
 
 // Protected profile routes
+router.get('/me', verifyToken, getCurrentUser);
 router.put('/profile', verifyToken, validateProfile, updateProfile);
 router.put('/change-password', verifyToken, validateChangePassword, changePassword);
 

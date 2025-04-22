@@ -33,20 +33,24 @@
       </div>
 
       <div class="mt-4 space-y-2">
+        <!-- Khi còn hàng -->
         <Button
           v-if="product.quantity > 0"
           icon="pi pi-shopping-cart"
           label="Thêm vào giỏ"
-          class="w-full p-button-outlined"
+          class="w-full px-5 py-2.5 text-sm font-medium rounded-lg bg-primary-500 hover:bg-primary-600 text-white shadow-sm transition-all"
           @click="addToCart"
           :loading="loading"
         />
+
+        <!-- Khi hết hàng -->
         <Button
           v-else
           icon="pi pi-bell"
           label="Thông báo khi có hàng"
+          class="w-full px-5 py-2.5 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 hover:border-gray-400 transition-colors"
           severity="secondary"
-          class="w-full p-button-outlined"
+          outlined
           @click="notifyWhenAvailable"
         />
       </div>

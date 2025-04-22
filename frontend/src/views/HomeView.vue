@@ -6,13 +6,15 @@
         <template #item="slotProps">
           <div class="relative">
             <img :src="slotProps.data.image" :alt="slotProps.data.title" class="w-full h-[500px] object-cover" />
-            <div class="absolute inset-0 bg-gradient-to-r from-primary-900/50 to-transparent flex flex-col justify-center">
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-primary-900/50 to-transparent flex flex-col justify-center">
               <div class="container mx-auto px-6 md:px-12">
                 <div class="max-w-xl">
                   <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">{{ slotProps.data.title }}</h2>
                   <p class="text-lg md:text-xl text-white/90 mb-8">{{ slotProps.data.description }}</p>
                   <router-link :to="slotProps.data.buttonLink">
-                    <Button :label="slotProps.data.buttonText" size="large" class="shadow-lg hover:scale-105 transition-transform" />
+                    <Button :label="slotProps.data.buttonText" size="large"
+                      class="bg-white text-primary-700 font-semibold px-6 py-3 rounded-full shadow-lg hover:bg-primary-600 hover:text-white transition-all duration-300" />
                   </router-link>
                 </div>
               </div>
@@ -35,9 +37,10 @@
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          <div v-for="(category, index) in categories" :key="index" 
-              class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 text-center cursor-pointer transform hover:-translate-y-1 transition-transform group">
-            <div class="rounded-full bg-primary-50 w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-100 transition-colors">
+          <div v-for="(category, index) in categories" :key="index"
+            class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 text-center cursor-pointer transform hover:-translate-y-1 transition-transform group">
+            <div
+              class="rounded-full bg-primary-50 w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-100 transition-colors">
               <i :class="category.icon" class="text-2xl text-primary-600"></i>
             </div>
             <h3 class="font-semibold text-gray-800">{{ category.name }}</h3>
@@ -84,8 +87,10 @@
         </h2>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 items-center">
-          <div v-for="(brand, index) in brands" :key="index" class="bg-white p-4 rounded-lg flex items-center justify-center">
-            <div class="flex flex-col items-center space-y-3 filter grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
+          <div v-for="(brand, index) in brands" :key="index"
+            class="bg-white p-4 rounded-lg flex items-center justify-center">
+            <div
+              class="flex flex-col items-center space-y-3 filter grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
               <i :class="brand.icon" class="text-4xl text-gray-700"></i>
               <span class="font-medium text-gray-800">{{ brand.name }}</span>
             </div>
@@ -100,25 +105,28 @@
         <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
           <span class="border-b-4 border-primary-500 pb-2">Tại sao chọn chúng tôi?</span>
         </h2>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="bg-white p-6 rounded-xl shadow-md text-center transform transition-transform hover:-translate-y-2">
+          <div
+            class="bg-white p-6 rounded-xl shadow-md text-center transform transition-transform hover:-translate-y-2">
             <div class="bg-primary-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
               <i class="pi pi-truck text-4xl text-primary-600"></i>
             </div>
             <h3 class="text-xl font-semibold mb-3">Miễn phí vận chuyển</h3>
             <p class="text-gray-600">Miễn phí vận chuyển cho đơn hàng từ 500,000đ trên toàn quốc.</p>
           </div>
-          
-          <div class="bg-white p-6 rounded-xl shadow-md text-center transform transition-transform hover:-translate-y-2">
+
+          <div
+            class="bg-white p-6 rounded-xl shadow-md text-center transform transition-transform hover:-translate-y-2">
             <div class="bg-primary-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
               <i class="pi pi-shield text-4xl text-primary-600"></i>
             </div>
             <h3 class="text-xl font-semibold mb-3">Bảo hành 12 tháng</h3>
             <p class="text-gray-600">Tất cả sản phẩm đều được bảo hành 12 tháng và đổi trả miễn phí trong 30 ngày.</p>
           </div>
-          
-          <div class="bg-white p-6 rounded-xl shadow-md text-center transform transition-transform hover:-translate-y-2">
+
+          <div
+            class="bg-white p-6 rounded-xl shadow-md text-center transform transition-transform hover:-translate-y-2">
             <div class="bg-primary-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
               <i class="pi pi-clock text-4xl text-primary-600"></i>
             </div>
@@ -166,7 +174,8 @@
             <Button label="Đăng ký ngay" size="large" class="px-8 shadow-lg" />
           </router-link>
           <router-link to="/products">
-            <Button label="Xem sản phẩm" severity="secondary" outlined class="px-8 text-white border-white hover:bg-white hover:text-primary-700" />
+            <Button label="Xem sản phẩm" severity="secondary" outlined
+              class="px-8 text-white border-white hover:bg-white hover:text-primary-700" />
           </router-link>
         </div>
       </div>
@@ -189,26 +198,26 @@ const featuredProducts = ref([]);
 
 // Responsive options for carousel
 const responsiveOptions = [
-    {
-        breakpoint: '1280px',
-        numVisible: 4,
-        numScroll: 1
-    },
-    {
-        breakpoint: '1024px',
-        numVisible: 3,
-        numScroll: 1
-    },
-    {
-        breakpoint: '768px',
-        numVisible: 2,
-        numScroll: 1
-    },
-    {
-        breakpoint: '640px',
-        numVisible: 1,
-        numScroll: 1
-    }
+  {
+    breakpoint: '1280px',
+    numVisible: 4,
+    numScroll: 1
+  },
+  {
+    breakpoint: '1024px',
+    numVisible: 3,
+    numScroll: 1
+  },
+  {
+    breakpoint: '768px',
+    numVisible: 2,
+    numScroll: 1
+  },
+  {
+    breakpoint: '640px',
+    numVisible: 1,
+    numScroll: 1
+  }
 ];
 
 // Hero banner items

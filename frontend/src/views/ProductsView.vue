@@ -71,9 +71,20 @@
           </div>
           
           <!-- Apply/Reset Buttons -->
+          <!-- Desktop -->
           <div class="flex space-x-3">
-            <Button label="Áp dụng" class="w-full" @click="applyFilters" />
-            <Button label="Đặt lại" severity="secondary" outlined class="w-full" @click="resetFilters" />
+            <Button
+              label="Áp dụng"
+              class="w-full py-3 px-4 font-semibold bg-primary-500 text-white hover:bg-primary-600 transition-all"
+              @click="applyFilters"
+            />
+            <Button
+              label="Đặt lại"
+              severity="secondary"
+              outlined
+              class="w-full py-3 px-4 font-semibold text-gray-700 hover:bg-gray-100 transition-all"
+              @click="resetFilters"
+            />
           </div>
         </div>
       </div>
@@ -82,7 +93,11 @@
       <div class="lg:col-span-3">
         <!-- Mobile Filter Button -->
         <div class="lg:hidden mb-4">
-          <Button icon="pi pi-filter" label="Bộ lọc" class="w-full" @click="showMobileFilter = true" />
+          <Button
+            icon="pi pi-filter"
+            label="Bộ lọc"
+            class="w-full py-3 px-4 font-medium justify-center bg-primary-500 hover:bg-primary-600 text-white transition-all"
+          />
         </div>
         
         <ProductGrid ref="productGrid" />
@@ -146,10 +161,21 @@
         </div>
       </div>
       
+      <!-- Mobile (Sidebar) -->
       <template #footer>
         <div class="flex space-x-3">
-          <Button label="Áp dụng" class="w-full" @click="applyMobileFilters" />
-          <Button label="Đặt lại" severity="secondary" outlined class="w-full" @click="resetFilters" />
+          <Button
+            label="Áp dụng"
+            class="w-full py-3 px-4 font-semibold bg-primary-500 text-white hover:bg-primary-600 transition-all"
+            @click="applyMobileFilters"
+          />
+          <Button
+            label="Đặt lại"
+            severity="secondary"
+            outlined
+            class="w-full py-3 px-4 font-semibold text-gray-700 hover:bg-gray-100 transition-all"
+            @click="resetFilters"
+          />
         </div>
       </template>
     </Sidebar>

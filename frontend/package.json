@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && xcopy images dist\\images /E /I /Y",
     "preview": "vite preview"
   },
   "dependencies": {

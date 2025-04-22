@@ -197,9 +197,9 @@ const handleSubmit = async () => {
   width: 100%;
 }
 
+/* Sử dụng style từ App.vue để đảm bảo nhất quán */
 :deep(.p-inputtext:enabled:focus) {
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
-  border-color: var(--primary-color);
+  @apply ring-2 ring-primary-500 border-primary-500;
 }
 
 :deep(.p-float-label input:focus ~ label),

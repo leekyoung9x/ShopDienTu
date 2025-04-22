@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 
 const getAllProducts = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, search = '' } = req.query;
+    const { page = 1, limit = 10, search = '', sort = '-createdAt' } = req.query;
     const offset = (page - 1) * limit;
 
     const where = {};
@@ -14,11 +14,26 @@ const getAllProducts = async (req, res, next) => {
       };
     }
 
+    // Xử lý tham số sắp xếp
+    let order = [['createdAt', 'DESC']];  // Mặc định
+    
+    if (sort) {
+      const isDesc = sort.startsWith('-');
+      const field = isDesc ? sort.substring(1) : sort;
+      const direction = isDesc ? 'DESC' : 'ASC';
+      
+      // Đảm bảo field hợp lệ để tránh SQL injection
+      const validFields = ['name', 'price', 'createdAt', 'quantity'];
+      if (validFields.includes(field)) {
+        order = [[field, direction]];
+      }
+    }
+
     const products = await Product.findAndCountAll({
       where,
       limit: parseInt(limit),
       offset: parseInt(offset),
-      order: [['createdAt', 'DESC']]
+      order
     });
 
     res.json({

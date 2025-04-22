@@ -24,33 +24,43 @@
             />
           </div>
           <div class="text-gray-600 text-sm">
-            <span v-if="totalRecords > 0">Hiển thị {{ products.length }} trong tổng số {{ totalRecords }} sản phẩm</span>
+            <span v-if="totalRecords > 0">Hiển thị {{ sortedProducts.length }} trong tổng số {{ totalRecords }} sản phẩm</span>
             <span v-else>0 sản phẩm</span>
           </div>
         </div>
 
           <!-- Right: Search and sort -->
         <div class="flex flex-wrap gap-3 items-center ml-auto">
+          <!-- Ô tìm kiếm -->
           <div class="relative">
-            <div class="p-input-icon-left p-input-icon-right w-full">
-              <i class="pi pi-search text-primary-500" />
+            <div class="relative w-full max-w-xs">
+              <i class="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-500 text-sm"></i>
               <InputText
                 v-model="filters.search"
                 placeholder="Tìm kiếm sản phẩm..."
-                class="w-full py-2 px-4 pl-10 rounded-full border-2 border-gray-200 focus:border-primary-400 hover:border-primary-300 transition-all shadow-sm"
+                class="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gray-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-300 text-sm transition-all"
                 @keydown.enter="fetchProducts"
               />
-              <i v-if="filters.search" @click="clearSearch" class="pi pi-times text-gray-400 cursor-pointer hover:text-primary-500 transition-colors" />
+              <i
+                v-if="filters.search"
+                @click="clearSearch"
+                class="pi pi-times absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer hover:text-primary-500 text-sm"
+              />
             </div>
           </div>
-          
+
+          <!-- Dropdown sắp xếp -->
           <Dropdown
             v-model="filters.sortBy"
             :options="sortOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Sắp xếp theo"
-            class="min-w-[200px]"
+            placeholder="Sắp xếp"
+            class="min-w-[180px] text-sm"
+            :pt="{
+              root: { class: 'rounded-lg border border-gray-300 py-2 px-3 text-sm shadow-sm focus:ring-primary-400' },
+              input: { class: 'border-none focus:ring-0 focus:outline-none bg-transparent p-0 text-sm' }
+            }"
           />
         </div>
       </div>
@@ -67,9 +77,9 @@
     </div>
 
     <!-- Products grid view -->
-    <div v-else-if="viewMode === 'grid' && products.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <div v-else-if="viewMode === 'grid' && sortedProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       <div 
-        v-for="product in products" 
+        v-for="product in sortedProducts" 
         :key="product.id" 
         class="transform hover:-translate-y-1 transition-all duration-300"
       >
@@ -78,9 +88,9 @@
     </div>
 
     <!-- Products list view -->
-    <div v-else-if="viewMode === 'list' && products.length > 0" class="space-y-4">
+    <div v-else-if="viewMode === 'list' && sortedProducts.length > 0" class="space-y-4">
       <div 
-        v-for="product in products" 
+        v-for="product in sortedProducts" 
         :key="product.id" 
         class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden"
       >
@@ -130,19 +140,24 @@
               </div>
               
               <div class="flex gap-2">
+                <!-- Khi còn hàng -->
                 <Button
                   v-if="product.quantity > 0"
                   icon="pi pi-shopping-cart"
-                  label="Thêm vào giỏ"
+                  label="Thêm vào giỏ hàng"
+                  class="px-5 py-2.5 rounded-lg bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium shadow-sm transition-all"
                   @click="addToCart(product)"
                   :loading="loadingStates[product.id]"
                 />
+
+                <!-- Khi hết hàng -->
                 <Button
                   v-else
                   icon="pi pi-bell"
                   label="Thông báo khi có hàng"
                   severity="secondary"
                   outlined
+                  class="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-700 border-gray-300 hover:border-gray-400 transition-colors"
                 />
               </div>
             </div>
@@ -152,7 +167,7 @@
     </div>
 
     <!-- Empty state -->
-    <div v-else-if="!loading && products.length === 0" class="text-center py-12 bg-white rounded-xl shadow-sm">
+    <div v-else-if="!loading && sortedProducts.length === 0" class="text-center py-12 bg-white rounded-xl shadow-sm">
       <div class="mx-auto w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
         <i class="pi pi-shopping-bag text-4xl text-gray-400"></i>
       </div>
@@ -389,10 +404,33 @@ const applyExternalFilters = (externalFilters) => {
   fetchProducts();
 };
 
+// Computed property để sắp xếp sản phẩm theo rating (phía client) vì rating không phải là trường trong database
+const sortedProducts = computed(() => {
+  if (filters.sortBy === '-rating') {
+    // Sắp xếp theo rating giảm dần nếu người dùng chọn "Đánh giá cao nhất"
+    return [...products.value].sort((a, b) => {
+      const ratingA = a.rating || 0;
+      const ratingB = b.rating || 0;
+      return ratingB - ratingA;
+    });
+  }
+  return products.value;
+});
+
 // Watch for filter changes
 watch(() => [filters.sortBy], () => {
   filters.first = 0; // Reset pagination when sorting changes
-  fetchProducts();
+  
+  // Chỉ gọi API nếu không phải sắp xếp theo rating
+  if (filters.sortBy !== '-rating') {
+    fetchProducts();
+  } else {
+    // Nếu sắp xếp theo rating, chỉ cần sắp xếp lại dữ liệu hiện có
+    // Nhưng vẫn cần gọi API để lấy dữ liệu ban đầu nếu chưa có
+    if (products.value.length === 0) {
+      fetchProducts();
+    }
+  }
 });
 
 // Initialize and fetch products

@@ -1,61 +1,83 @@
 <template>
-  <div class="bg-white rounded-lg shadow-sm p-6">
-    <h2 class="text-xl font-semibold text-gray-900 mb-4">
-      Tóm tắt đơn hàng
-    </h2>
-
-    <!-- Summary Details -->
-    <div class="space-y-3">
-      <div class="flex justify-between text-gray-600">
-        <span>Tạm tính</span>
-        <span>{{ formatPrice(subtotal) }}</span>
+  <Card>
+    <template #header>
+      <div class="flex items-center gap-2">
+        <i class="pi pi-shopping-bag text-primary-500 text-base"></i>
+        <h2 class="text-xl font-semibold text-gray-900 mb-0">
+          Tóm tắt đơn hàng
+        </h2>
       </div>
-      <div class="flex justify-between text-gray-600">
-        <span>Phí vận chuyển</span>
-        <span v-if="shippingFee > 0">{{ formatPrice(shippingFee) }}</span>
-        <span v-else class="text-green-600">Miễn phí</span>
-      </div>
-      <Divider />
-      <div class="flex justify-between text-lg font-semibold">
-        <span>Tổng cộng</span>
-        <span class="text-primary-600">{{ formatPrice(total) }}</span>
-      </div>
-    </div>
+    </template>
 
-    <!-- Free Shipping Progress -->
-    <div v-if="!isFreeShipping" class="mt-6">
-      <p class="text-sm text-gray-600 mb-2">
-        Mua thêm {{ formatPrice(freeShippingThreshold - subtotal) }} để được miễn phí vận chuyển
-      </p>
-      <ProgressBar
-        :value="(subtotal / freeShippingThreshold) * 100"
-        :showValue="false"
-      />
-    </div>
+    <template #content>
+      <!-- Summary Details -->
+      <div class="space-y-3">
+        <div class="flex justify-between text-gray-600">
+          <span>Tạm tính</span>
+          <span>{{ formatPrice(subtotal) }}</span>
+        </div>
+        <div class="flex justify-between text-gray-600">
+          <span>Phí vận chuyển</span>
+          <span v-if="shippingFee > 0">{{ formatPrice(shippingFee) }}</span>
+          <span v-else class="text-green-600">Miễn phí</span>
+        </div>
+        <Divider />
+        <div class="flex justify-between text-lg font-semibold">
+          <span>Tổng cộng</span>
+          <span class="text-primary-600">{{ formatPrice(total) }}</span>
+        </div>
+      </div>
 
-    <!-- Action Buttons -->
-    <div class="mt-6 space-y-3">
-      <Button
-        label="Tiến hành thanh toán"
-        icon="pi pi-check"
-        class="w-full"
-        :disabled="!items.length"
-        @click="$emit('checkout')"
-      />
-      <router-link to="/products">
-        <Button
-          label="Tiếp tục mua sắm"
-          icon="pi pi-shopping-cart"
-          severity="secondary"
-          text
-          class="w-full"
+      <!-- Free Shipping Progress -->
+      <div v-if="!isFreeShipping" class="mt-6">
+        <p class="text-sm text-gray-600 mb-2">
+          Mua thêm {{ formatPrice(freeShippingThreshold - subtotal) }} để được miễn phí vận chuyển
+        </p>
+        <ProgressBar
+          :value="(subtotal / freeShippingThreshold) * 100"
+          :showValue="false"
+          class="h-1.5"
         />
-      </router-link>
-    </div>
+      </div>
+    </template>
+
+    <template #footer>
+  <!-- Action Buttons -->
+  <div class="space-y-3">
+    <!-- Button: Thanh toán -->
+    <Button
+      label="Tiến hành thanh toán"
+      icon="pi pi-credit-card"
+      class="w-full justify-center py-3 px-4 font-medium text-white bg-blue-600 hover:bg-blue-700 transition-all duration-150"
+      :disabled="!items.length"
+      @click="$emit('checkout')"
+    />
+
+    <!-- Button: Tiếp tục mua sắm -->
+    <router-link to="/products" class="block w-full">
+      <Button
+        label="Tiếp tục mua sắm"
+        icon="pi pi-shopping-cart"
+        iconPos="left"
+        severity="secondary"
+        outlined
+        class="w-full justify-center py-3 px-4 font-medium text-gray-700 hover:bg-gray-100 transition-all duration-150"
+      />
+    </router-link>
+  </div>
+
+  <!-- Secure Payment -->
+  <div class="flex items-center justify-center mt-4 text-sm text-gray-500">
+    <i class="pi pi-lock mr-2"></i>
+    <span>Thanh toán an toàn & bảo mật</span>
   </div>
 </template>
 
+  </Card>
+</template>
+
 <script setup>
+import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Divider from 'primevue/divider';
 import ProgressBar from 'primevue/progressbar';
