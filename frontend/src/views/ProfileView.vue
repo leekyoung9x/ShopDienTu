@@ -154,8 +154,10 @@ const errors = reactive({
 
 const resetForm = () => {
   const user = authStore.user;
-  form.fullName = user.fullName;
-  form.email = user.email;
+  if (!user) return; // Bảo vệ khỏi truy cập null
+  
+  form.fullName = user.fullName || '';
+  form.email = user.email || '';
   form.phone = user.phone || '';
   form.address = user.address || '';
 };
@@ -263,9 +265,20 @@ const changePassword = async () => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   loading.value = true;
-  resetForm();
-  loading.value = false;
+  try {
+    await authStore.fetchUser(); // Đợi thông tin người dùng được tải xong
+    resetForm();
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: 'Không thể tải thông tin người dùng. Vui lòng thử lại sau.',
+      life: 3000
+    });
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
