@@ -33,6 +33,14 @@ const Product = sequelize.define('Product', {
   image: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+  brand: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  category: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 });
 

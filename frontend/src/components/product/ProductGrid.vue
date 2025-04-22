@@ -276,11 +276,11 @@ const fetchProducts = async () => {
       limit: filters.rows,
       search: filters.search,
       sort: filters.sortBy,
-      // Add additional filter parameters here as needed
-      // category: filters.categories.join(','),
-      // brand: filters.brands.join(','),
-      // minPrice: filters.priceRange[0],
-      // maxPrice: filters.priceRange[1]
+      // Add filter parameters
+      category: filters.category,
+      brands: filters.brands ? filters.brands.join(',') : '',
+      minPrice: filters.priceRange && filters.priceRange[0] ? filters.priceRange[0] : '',
+      maxPrice: filters.priceRange && filters.priceRange[1] ? filters.priceRange[1] : ''
     });
 
     products.value = response.data.map(product => ({
@@ -326,11 +326,11 @@ const resetFilters = () => {
   filters.sortBy = '-createdAt';
   filters.first = 0;
   
-  // Clear other filters if they were set
-  // filters.categories = [];
-  // filters.brands = [];
-  // filters.priceRange = [0, 0];
-  // filters.minRating = 0;
+  // Clear all filters
+  filters.category = '';
+  filters.brands = [];
+  filters.priceRange = [0, 50000000];
+  filters.minRating = 0;
   
   // Update URL and refetch
   router.replace({ query: {} });
@@ -398,9 +398,29 @@ const getReviewCount = (product) => {
 
 // Apply external filters from parent component
 const applyExternalFilters = (externalFilters) => {
-  // Implement logic to apply external filters
-  // This would be used by parent component
-  console.log('Applied external filters:', externalFilters);
+  if (!externalFilters) return;
+  
+  // Update filters with external values
+  if (externalFilters.brands) {
+    filters.brands = externalFilters.brands;
+  }
+  
+  if (externalFilters.category) {
+    filters.category = externalFilters.category;
+  }
+  
+  if (externalFilters.priceRange) {
+    filters.priceRange = externalFilters.priceRange;
+  }
+  
+  if (externalFilters.minRating !== undefined) {
+    filters.minRating = externalFilters.minRating;
+  }
+  
+  // Reset pagination
+  filters.first = 0;
+  
+  // Apply filters
   fetchProducts();
 };
 

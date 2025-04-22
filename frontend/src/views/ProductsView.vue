@@ -27,7 +27,10 @@
             <h4 class="font-semibold mb-3 text-gray-800">Danh mục</h4>
             <div class="flex flex-col space-y-2">
               <div v-for="(category, index) in categories" :key="index"
-                class="flex items-center p-2 hover:bg-primary-50 rounded-lg cursor-pointer transition-colors">
+                class="flex items-center p-2 hover:bg-primary-50 rounded-lg cursor-pointer transition-colors"
+                :class="{'bg-primary-50': selectedCategory === category.value}"
+                @click="selectedCategory = category.value === selectedCategory ? '' : category.value"
+              >
                 <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center mr-3">
                   <i :class="category.icon" class="text-primary-600"></i>
                 </div>
@@ -63,9 +66,15 @@
           <div class="mb-6">
             <h4 class="font-semibold mb-3 text-gray-800">Đánh giá</h4>
             <div class="flex flex-col gap-2">
-              <div v-for="n in 5" :key="n" class="flex items-center cursor-pointer hover:text-primary-600">
+              <div 
+                v-for="n in 5" 
+                :key="n" 
+                class="flex items-center cursor-pointer hover:text-primary-600"
+                :class="{'text-primary-600 font-medium': selectedRating === 6-n}"
+                @click="selectedRating = selectedRating === 6-n ? 0 : 6-n"
+              >
                 <Rating :modelValue="6-n" readonly :cancel="false" />
-                <span class="ml-2 text-sm text-gray-600">trở lên</span>
+                <span class="ml-2 text-sm" :class="{'text-primary-600': selectedRating === 6-n, 'text-gray-600': selectedRating !== 6-n}">trở lên</span>
               </div>
             </div>
           </div>
@@ -206,13 +215,14 @@ const breadcrumbItems = [
 
 // Categories
 const categories = [
-  { name: 'Điện thoại', icon: 'pi pi-mobile' },
-  { name: 'Laptop', icon: 'pi pi-desktop' },
-  { name: 'Tablet', icon: 'pi pi-tablet' },
-  { name: 'Tai nghe', icon: 'pi pi-volume-up' },
-  { name: 'Đồng hồ thông minh', icon: 'pi pi-clock' },
-  { name: 'Phụ kiện', icon: 'pi pi-box' }
+  { name: 'Điện thoại', icon: 'pi pi-mobile', value: 'Phone' },
+  { name: 'Laptop', icon: 'pi pi-desktop', value: 'Laptop' },
+  { name: 'Tablet', icon: 'pi pi-tablet', value: 'Tablet' },
+  { name: 'Tai nghe', icon: 'pi pi-volume-up', value: 'Headphones' },
+  { name: 'Đồng hồ thông minh', icon: 'pi pi-clock', value: 'Smartwatch' },
+  { name: 'Phụ kiện', icon: 'pi pi-box', value: 'Accessories' }
 ];
+const selectedCategory = ref('');
 
 // Brands
 const brands = ['Apple', 'Samsung', 'Sony', 'Dell', 'Asus'];
@@ -220,6 +230,9 @@ const selectedBrands = ref([]);
 
 // Price Range
 const priceRange = ref([0, 50000000]);
+
+// Rating
+const selectedRating = ref(0);
 
 // Format price to Vietnamese currency
 const formatPrice = (price) => {
@@ -232,16 +245,12 @@ const formatPrice = (price) => {
 // Apply filters
 const applyFilters = () => {
   if (productGrid.value) {
-    // Giả sử productGrid có phương thức applyFilters
-    // productGrid.value.applyFilters({
-    //   brands: selectedBrands.value,
-    //   priceRange: priceRange.value,
-    // });
-    
-    // Trong thực tế, cần phải thêm phương thức này vào component ProductGrid
-    console.log('Applying filters:', {
+    // Gọi phương thức applyExternalFilters trong ProductGrid
+    productGrid.value.applyExternalFilters({
       brands: selectedBrands.value,
-      priceRange: priceRange.value
+      category: selectedCategory.value,
+      priceRange: priceRange.value,
+      minRating: selectedRating.value
     });
   }
 };
@@ -255,12 +264,14 @@ const applyMobileFilters = () => {
 // Reset filters
 const resetFilters = () => {
   selectedBrands.value = [];
+  selectedCategory.value = '';
   priceRange.value = [0, 50000000];
+  selectedRating.value = 0;
   
-  // Reset filters in ProductGrid component if needed
-  // if (productGrid.value) {
-  //   productGrid.value.resetFilters();
-  // }
+  // Reset filters in ProductGrid component
+  if (productGrid.value) {
+    productGrid.value.resetFilters();
+  }
 };
 
 // Initialize from URL params if any

@@ -4,14 +4,51 @@ const { Op } = require('sequelize');
 
 const getAllProducts = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, search = '', sort = '-createdAt' } = req.query;
+    const { 
+      page = 1, 
+      limit = 10, 
+      search = '', 
+      sort = '-createdAt',
+      brands = '',
+      category = '',
+      minPrice = '',
+      maxPrice = ''
+    } = req.query;
     const offset = (page - 1) * limit;
 
     const where = {};
+    
+    // Xử lý tìm kiếm theo tên
     if (search) {
       where.name = {
         [Op.like]: `%${search}%`
       };
+    }
+    
+    // Xử lý lọc theo thương hiệu
+    if (brands && brands.length > 0) {
+      const brandArray = brands.split(',');
+      if (brandArray.length > 0) {
+        where.brand = {
+          [Op.in]: brandArray
+        };
+      }
+    }
+    
+    // Xử lý lọc theo danh mục
+    if (category) {
+      where.category = category;
+    }
+    
+    // Xử lý lọc theo khoảng giá
+    if (minPrice && !isNaN(parseFloat(minPrice))) {
+      where.price = where.price || {};
+      where.price[Op.gte] = parseFloat(minPrice);
+    }
+    
+    if (maxPrice && !isNaN(parseFloat(maxPrice))) {
+      where.price = where.price || {};
+      where.price[Op.lte] = parseFloat(maxPrice);
     }
 
     // Xử lý tham số sắp xếp
@@ -23,7 +60,7 @@ const getAllProducts = async (req, res, next) => {
       const direction = isDesc ? 'DESC' : 'ASC';
       
       // Đảm bảo field hợp lệ để tránh SQL injection
-      const validFields = ['name', 'price', 'createdAt', 'quantity'];
+      const validFields = ['name', 'price', 'createdAt', 'quantity', 'brand', 'category'];
       if (validFields.includes(field)) {
         order = [[field, direction]];
       }
