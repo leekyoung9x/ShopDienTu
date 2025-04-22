@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/auth';
 
 // Create axios instance with base config
 const instance = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: 'http://localhost:3000/',
   headers: {
     'Content-Type': 'application/json'
   }

@@ -3,13 +3,26 @@
     <!-- Global Toast Container -->
     <Toast position="top-right" />
     
-    <!-- Router View -->
-    <router-view></router-view>
+    <!-- Dynamic Layout Based on Route Meta -->
+    <component :is="layout">
+      <router-view></router-view>
+    </component>
   </div>
 </template>
 
 <script setup>
-// Toast is registered globally, no need to import
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+import AuthLayout from '@/layouts/AuthLayout.vue';
+
+const route = useRoute();
+
+// Determine layout based on route meta
+const layout = computed(() => {
+  const layoutName = route.meta.layout || 'default';
+  return layoutName === 'auth' ? AuthLayout : DefaultLayout;
+});
 </script>
 
 <style>
